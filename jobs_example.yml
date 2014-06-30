@@ -1,0 +1,16 @@
+job1:
+  label: Optimize images while creating
+  watch: /var/www/html/media/
+  events: ['create']
+  options: []
+  recursive: true
+  
+# exclude: [/var/www/html/media/a] works
+# exclude: [^/var/www/html/media/a/.*/.*] works
+# exclude: [^/var/www/html/media/a/.*/.*/.*/100] works
+# exclude: [^/var/www/html/media/a/.*/.*/.*/(100|200)] works
+# exclude: [^/var/www/html/media/a/.*/.*/.*/(\d)] works
+  exclude: [^/var/www/html/media/.*/.*/.*/.*/(\d)] #works
+
+  # command: sudo -u notikumi /usr/local/notikumi/img-optimization/img-optimization.sh file $filename # $src_path
+  command: echo "file created filename:$filename with $src_path $src_rel_path $datetime $tflags $nflags $watched" >> /home/canos/.watcher/watcher.log
