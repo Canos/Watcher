@@ -273,12 +273,17 @@ class EventHandler(pyinotify.ProcessEvent):
 
 class WatcherDaemon(Daemon):
     def run(self):
+        
+        sys.stdout.write("run watcher daemon... \n")
+            
         print datetime.datetime.today()
 
         dir = self._loadWatcherDirectory()
         jobs_file = file(dir + '/jobs.yml', 'r')
         self.wdds = []
         self.notifiers = []
+        
+        sys.stdout.write("jobs file: %s/jobs.yml \n" % dir)
 
         # parse jobs.yml and add_watch/notifier for each entry
         print jobs_file
@@ -311,6 +316,8 @@ class WatcherDaemon(Daemon):
         n = pyinotify.ThreadedNotifier(wm, handler)
         self.notifiers.append(pyinotify.ThreadedNotifier(wm, handler))
         n.start()
+        
+        sys.stdout.write("addWatch to folder %s \n" % folder)
 
     def _loadWatcherDirectory(self):
         watcher_dir = defineWatcherDirectory()
@@ -387,7 +394,7 @@ if __name__ == "__main__":
     log = watcher_dir + '/watcher.log'
     pidfile = watcher_dir + '/watcher.pid'
     # create the log
-    f = open(log, 'w')
+    f = open(log, 'a')
     f.close()
 
     try:
@@ -395,11 +402,11 @@ if __name__ == "__main__":
         daemon = WatcherDaemon(pidfile, stdout=log, stderr=log)
         if len(sys.argv) == 2:
             if 'start' == sys.argv[1]:
-                f = open(log, 'w')
+                f = open(log, 'a')
                 f.close()
                 daemon.start()
             elif 'stop' == sys.argv[1]:
-                os.remove(log)
+                #os.remove(log)
                 daemon.stop()
             elif 'restart' == sys.argv[1]:
                 daemon.restart()
@@ -414,5 +421,5 @@ if __name__ == "__main__":
             sys.exit(2)
     except Exception, e:
         print e
-        os.remove(log)
+        #os.remove(log)
         raise
